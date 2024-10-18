@@ -10,7 +10,7 @@ import { User } from 'src/entity/user.entity';
 import { CreateMessageDto } from 'src/dtos/createmessage.dto';
 import { MessageService } from 'src/api/message/message.service';
 
-@WebSocketGateway({ cors: { origin: '*' } })
+@WebSocketGateway({ cors: { origin: ['https://my-website-f156f.web.app'], credentials: true}})
 export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
   private users: { [clientId: string]: User } = {}; // To store connected users
@@ -58,6 +58,8 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     this.server.emit('users', this.users); // Emit updated user list to all clients
   }
 
+
+ //@UseGuards(GatewayGuard)
   @SubscribeMessage('join')
   handleJoin(@ConnectedSocket() client: Socket) {
     const user = this.users[client.id]
@@ -66,7 +68,8 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       this.server.emit('users', this.users); // Emit updated user list to all clients
     }
   }
-
+  
+  //@UseGuards(GatewayGuard)
   @SubscribeMessage('message')
   async handleMessage(@ConnectedSocket() client: Socket, @MessageBody() data: { message: string }) {
     const user = this.users[client.id]

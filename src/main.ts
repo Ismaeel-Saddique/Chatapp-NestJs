@@ -7,6 +7,6 @@ async function bootstrap() {
     origin: ['https://my-website-f156f.web.app'], 
       credentials: true
   });
-  await app.listen(3000);
+  await app.listen(process.env.Port || 3000, '0.0.0.0');
 }
 bootstrap();
